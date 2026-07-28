@@ -1,51 +1,64 @@
-# FixStl
+# CBZ to Kindle EPUB Converter
 
-Herramienta simple en Python para diagnosticar y reparar archivos STL.
+This script converts CBZ archives (manhwa/manga) into EPUB files optimized for basic Kindle devices.
+It resizes wide images to fit a Kindle screen width, and splits tall pages vertically into Kindle-height segments without scaling vertically.
 
-## Descripción
+## Features
 
-`Flix.py` carga un STL, analiza su geometría, aplica reparaciones con `trimesh` y `pymeshfix`, y exporta una versión corregida.
+- Converts `.cbz` files into `.epub`
+- Keeps image quality by avoiding vertical rescaling
+- Splits long pages into multiple Kindle-height pages when needed
+- Supports external cover image injection
+- Processes a single file or all `.cbz` files in a directory
 
-## Requisitos
+## Requirements
 
-- Python 3
-- numpy
-- trimesh
-- pymeshfix
+- Python 3.8+
+- Pillow
 
-## Instalación
-
-```bash
-cd /Users/cristiangonzalez/Documents/Dev
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-## Uso
+Install dependencies with:
 
 ```bash
-python3 Flix.py modelo.stl
+python3 -m pip install Pillow
 ```
 
-Salida por defecto:
+## Usage
+
+From the `cbz_to_kindle` folder:
 
 ```bash
-modelo_fixed.stl
+python3 convert.py my-comic.cbz
 ```
 
-Opciones:
-
-- `-o, --output` : nombre del archivo STL de salida
-- `--only-trimesh` : usa solo la reparación básica de `trimesh`
-
-Ejemplo:
+With a custom output file:
 
 ```bash
-python3 Flix.py modelo.stl --output modelo_reparado.stl
+python3 convert.py my-comic.cbz -o my-comic.epub
 ```
 
-## Notas
+With an external cover image:
 
-- Los archivos `.stl` grandes se excluyen del repositorio mediante `.gitignore`.
-- Si `pymeshfix` falla, el script intenta guardar el resultado de `trimesh`.
+```bash
+python3 convert.py my-comic.cbz --cover cover.jpg
+```
+
+Process all CBZ files in a folder:
+
+```bash
+python3 convert.py ./my-folder/
+```
+
+## Notes
+
+- Target Kindle resolution is `600x800`.
+- Image formats supported inside CBZ: `.jpg`, `.jpeg`, `.png`, `.webp`, `.gif`, `.bmp`.
+- If a cover image is provided, it becomes the first page and is included as the EPUB cover metadata.
+- The script writes an EPUB file with the same basename as the CBZ by default.
+
+## Example
+
+```bash
+python3 convert.py SL112-123.cbz --cover portada.jpg
+```
+
+This creates `SL112-123.epub` and includes the provided `portada.jpg` as the EPUB cover.
