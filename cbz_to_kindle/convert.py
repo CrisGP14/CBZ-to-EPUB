@@ -277,7 +277,7 @@ def process_cbz(cbz_path: Path, output_path: Path | None = None,
     build_epub(cbz_path.stem, all_page_bytes, output_path, cover_bytes=cover_bytes)
 
     size_mb = output_path.stat().st_size / 1_048_576
-    print(f"   ✅ Listo — {size_mb:.1f} MB → {output_path}")
+    print(f"Listo — {size_mb:.1f} MB → {output_path}")
 
 
 def main():
@@ -307,7 +307,7 @@ def main():
             print(f"⚠ No encontrado o no es CBZ: {inp}", file=sys.stderr)
 
     if not cbz_files:
-        print("❌ No se encontraron archivos CBZ.", file=sys.stderr)
+        print("No se encontraron archivos CBZ.", file=sys.stderr)
         sys.exit(1)
 
     if args.output and len(cbz_files) > 1:
@@ -316,18 +316,17 @@ def main():
 
     cover_path = Path(args.cover) if args.cover else None
     if cover_path and not cover_path.exists():
-        print(f"❌ Portada no encontrada: {cover_path}", file=sys.stderr)
+        print(f"Portada no encontrada: {cover_path}", file=sys.stderr)
         sys.exit(1)
 
-    print(f"🗂  {len(cbz_files)} archivo(s) a convertir")
-    print(f"📱 Resolución objetivo: {KINDLE_W}×{KINDLE_H}px (Kindle básico)")
+    print(f"{len(cbz_files)} archivo(s) a convertir")
+    print(f"Resolución objetivo: {KINDLE_W}×{KINDLE_H}px (Kindle básico)")
 
     for cbz_file in cbz_files:
         out = Path(args.output) if args.output else None
         process_cbz(cbz_file, out, cover_path=cover_path)
 
-    print("\n🎉 ¡Conversión completada!")
-    print("   Envía el EPUB a tu Kindle con 'Send to Kindle' o por cable USB.")
+    print("\n¡Conversión completada!")
 
 
 if __name__ == "__main__":
