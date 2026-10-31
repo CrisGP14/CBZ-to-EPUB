@@ -99,11 +99,3 @@ cbz_to_epub/
 ├── .gitignore
 └── cbz_to_kindle/   # included legacy/reference folder
 ```
-
-## Why this tool
-
-This project is useful when you want to read manga, manhwa, or comics in a simple EPUB format compatible with Kindle or similar devices without relying on heavy external tools.
-
-## License
-
-This project does not currently declare an explicit license in the repository, so please review usage terms according to your project or personal requirements.
