@@ -1,101 +1,87 @@
 # CBZ to EPUB
 
-A lightweight Python tool to convert CBZ comic archives into EPUB files optimized for basic Kindle devices.
+A lightweight Python tool that converts CBZ comics, especially long-strip manhwa, into EPUB files sized for basic Kindle devices.
 
-## Overview
-
-This project reads comic pages from a `.cbz` archive, converts the images to a Kindle-friendly format, and builds an EPUB document with the right page structure for reading on eReaders.
-
-The script preserves image quality by avoiding unnecessary vertical resizing and splitting extremely tall pages into smaller Kindle-sized segments when needed.
+Long vertical pages are hard to read on an e-reader because the whole strip is squeezed onto one screen. This script fits each page to the Kindle's width and cuts tall ones into screen-sized segments.
 
 ## Features
 
-- Converts `.cbz` archives into `.epub`
-- Optimizes output for Kindle-sized screens
-- Splits tall pages into multiple segments without excessive vertical distortion
-- Supports optional external cover images
-- Handles a single file or an entire folder of CBZ files
-- Produces a clean EPUB with proper page ordering and metadata
+- Converts a single `.cbz`, several files, or a whole folder
+- Splits tall pages into Kindle-sized segments without distorting them
+- Never enlarges images
+- Orders pages naturally (`2.jpg` comes before `10.jpg`)
+- Adds an optional cover as the first page and as the EPUB cover
+- Skips unreadable images instead of stopping
 
 ## Requirements
 
-- Python 3.8+
-- Pillow
-
-Install dependencies:
-
-```bash
-python3 -m pip install -r requirements.txt
-```
+- Python 3.10 or newer
+- [Pillow](https://python-pillow.org/)
 
 ## Installation
 
 ```bash
-git clone https://github.com/CrisGP14/cbz_to_epub.git
-cd cbz_to_epub
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+git clone https://github.com/CrisGP14/CBZ-to-EPUB.git
+cd CBZ-to-EPUB
+python3 -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+pip install Pillow
 ```
 
-## Usage
+> [!NOTE]
+> `requirements.txt` does not currently list Pillow, so install it directly as shown above.
 
-Convert a single file:
+## Usage
 
 ```bash
 python3 convert.py my-comic.cbz
 ```
 
-Use a custom output file:
+This creates `my-comic.epub` next to the original file.
+
+| Argument | Description |
+|---|---|
+| `input` | One or more `.cbz` files, or folders containing them |
+| `-o`, `--output PATH` | Output path; ignored when converting more than one file |
+| `--cover IMAGE` | Cover image, applied to every converted file |
+
+### Examples
 
 ```bash
-python3 convert.py my-comic.cbz -o my-comic.epub
-```
+# Choose the output file
+python3 convert.py my-comic.cbz -o output.epub
 
-Add a cover image:
-
-```bash
+# Add a cover
 python3 convert.py my-comic.cbz --cover cover.jpg
-```
 
-Convert all CBZ files in a directory:
-
-```bash
+# Convert every CBZ in a folder
 python3 convert.py ./my-folder/
 ```
 
-## Output
+Transfer the result to your Kindle with [Send to Kindle](https://www.amazon.com/sendtokindle). The program's console messages are in Spanish.
 
-By default, the script creates an EPUB file with the same base name as the input CBZ archive.
+## How it works
 
-Example:
+1. Reads the images from the archive in natural order. Supported formats: `.jpg`, `.jpeg`, `.png`, `.webp`, `.gif` and `.bmp`.
+2. Scales pages wider than 600 px down to 600 px, keeping the aspect ratio.
+3. Splits pages taller than 960 px (1.2 × the screen height) into segments of up to 800 px.
+4. Encodes every page as JPEG at quality 90 and builds the EPUB, using the file name as the title.
 
-```bash
-python3 convert.py SL112-123.cbz --cover portada.jpg
-```
+A cover image is scaled to fit 600×800 px, with black bars if needed.
 
-This creates:
+## Limitations
 
-```bash
-SL112-123.epub
-```
-
-And includes the provided cover image as the EPUB cover metadata.
-
-## Notes
-
-- Target resolution is `600x800` for basic Kindle devices.
-- Supported image formats inside CBZ files include `.jpg`, `.jpeg`, `.png`, `.webp`, `.gif`, and `.bmp`.
-- The script keeps the page width compatible with Kindle while avoiding vertical stretching.
-- If a cover file is supplied, it is placed as the first page and marked as the EPUB cover.
+- The target resolution is fixed at 600×800 px (the `KINDLE_W` and `KINDLE_H` constants in `convert.py`).
+- Pages are cut at fixed heights, so a cut can fall in the middle of a panel or speech bubble.
+- The EPUB language is always set to Spanish (`es`).
+- File names containing `&` or `<` produce an invalid EPUB; rename them first.
 
 ## Project structure
 
 ```text
-cbz_to_epub/
-├── convert.py
-├── README.md
-├── requirements.txt
+CBZ-to-EPUB/
+├── convert.py         # converter
+├── requirements.txt   # see the installation note
 ├── .gitignore
-└── cbz_to_kindle/   # included legacy/reference folder
+└── README.md
 ```
